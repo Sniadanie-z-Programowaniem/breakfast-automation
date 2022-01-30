@@ -1,0 +1,16 @@
+{
+  "name": "@breakfast-automation",
+  "version": "1.0.0",
+  "author": "",
+  "description": "Śniadanie z Programowaniem automation",
+  "main": "index.js",
+  "scripts": {
+    "build": "(cd webhook && npm run build)",
+    "old-build": "(cd webhook && npm run build) && cp -r webhook/dist/* api"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/node": "^1.12.1"
+  }
+}

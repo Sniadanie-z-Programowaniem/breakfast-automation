@@ -1,0 +1,27 @@
+{
+  "name": "@breakfast-automation/webhook",
+  "version": "1.0.0",
+  "author": "",
+  "description": "Trello webhook handler for Śniadanie z Programowaniem automation",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -p tsconfig.json --watch"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/node": "^1.12.1",
+    "dotenv": "^14.3.2",
+    "fastify": "^3.27.0",
+    "fastify-helmet": "^7.0.1",
+    "fastify-sensible": "^3.1.2",
+    "pino": "^7.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.13",
+    "@types/pino": "^7.0.5",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
+  }
+}
