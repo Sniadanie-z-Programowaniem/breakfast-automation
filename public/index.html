@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-    <h1>@breakfast/automation</h1>
-    <pre><code id="config"></code></pre>
-    <script>
-        const configElement = document.querySelector('#config');
-        fetch('/config').then(r => r.json()).then(config => configElement.innerHTML = JSON.stringify(config));
-    </script>
-</body>
-
+    <body>
+        <h1>@breakfast/automation</h1>
+        <pre><code id="config"></code></pre>
+        <script>
+            const configElement = document.querySelector('#config');
+            fetch('/config')
+                .then((r) => r.json())
+                .then((config) => (configElement.innerHTML = JSON.stringify(config)));
+        </script>
+    </body>
 </html>
