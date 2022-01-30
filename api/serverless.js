@@ -1,4 +1,5 @@
-export default (...args) =>
-  import('../webhook/dist/serverless').then((fn) => {
-    fn.default(...args);
-  });
+import run from '../webhook/dist/serverless';
+
+export default (...args) => {
+  run(...args);
+};
