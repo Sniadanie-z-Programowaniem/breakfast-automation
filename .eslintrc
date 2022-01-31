@@ -1,15 +1,26 @@
 {
     "root": true,
     "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
+    "plugins": ["functional", "@typescript-eslint"],
     "extends": [
+        "prettier",
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended"
     ],
     "rules": {
         "no-duplicate-imports": "error",
-        "sort-imports": "error"
+        "sort-imports": "error",
+        "functional/no-let": [
+            "error",
+            {
+                "allowLocalMutation": true,
+                "ignorePattern": "^mutable"
+            }
+        ],
+        "functional/prefer-readonly-type": "error",
+        "functional/no-this-expression": "error",
+        "functional/no-loop-statement": "error"
     },
     "env": {
         "node": true

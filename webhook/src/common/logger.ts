@@ -7,13 +7,16 @@ type LogLevel = typeof logLevels[number];
 
 const adaptPino = (method: LogLevel): Pino.BaseLogger[LogLevel] => pino[method].bind(pino);
 
-type Logger = { [K in LogLevel]: Pino.BaseLogger[K] };
+type Logger = { readonly [K in LogLevel]: Pino.BaseLogger[K] };
 
-const defaultLogger: { [K in LogLevel]: Pino.BaseLogger[K] } = logLevels.reduce((acc, level) => {
-    return {
-        ...acc,
-        [level]: adaptPino(level),
-    };
-}, {} as Logger);
+const defaultLogger: { readonly [K in LogLevel]: Pino.BaseLogger[K] } = logLevels.reduce(
+    (acc, level) => {
+        return {
+            ...acc,
+            [level]: adaptPino(level),
+        };
+    },
+    {} as Logger,
+);
 
 export const logger = defaultLogger;
