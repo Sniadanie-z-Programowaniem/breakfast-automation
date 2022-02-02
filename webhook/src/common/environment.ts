@@ -1,4 +1,5 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
+
 import { logger } from './logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -7,7 +8,8 @@ const packageMeta = require('../../package.json');
 export type EnvironmentConfig = {
     readonly VERSION: string;
     readonly APP_NAME: string;
-    readonly environment: NodeJS.ProcessEnv['NODE_ENV'];
+    readonly standaloneAppPort: number;
+    readonly environment: Exclude<NodeJS.ProcessEnv['NODE_ENV'], undefined>;
     readonly discord: {
         readonly botUserName: string;
         readonly newsPublishBotUrl: string;
@@ -15,12 +17,15 @@ export type EnvironmentConfig = {
 };
 
 export const environmentConfig: EnvironmentConfig = ((): EnvironmentConfig => {
-    dotenv.config();
+    // dotenv.config();
     logger.info('Loaded dotenv config');
+
+    const standaloneAppPort = process.env['STANDALONE_APP_PORT'];
 
     return {
         VERSION: packageMeta.version,
         APP_NAME: packageMeta.name,
+        standaloneAppPort: standaloneAppPort ? +standaloneAppPort : 8080,
         environment: process.env['NODE_ENV'] || 'development',
         discord: {
             // todo add proper validation of env variables

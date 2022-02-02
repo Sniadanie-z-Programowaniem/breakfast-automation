@@ -27,6 +27,6 @@
         /* Completeness */
         "skipLibCheck": true /* Skip type checking all .d.ts files. */
     },
-    "include": ["./src/**/*.ts"],
+    "include": ["./src/**/*.ts", "./typings"],
     "exclude": ["node_modules", "dist"]
 }

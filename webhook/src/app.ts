@@ -6,7 +6,7 @@ import { handle } from './controllers/trello-webhook-handler';
 const libs: FastifyPluginAsync = async (fastify) => {
     fastify.register(import('fastify-helmet'));
     fastify.register(import('fastify-sensible'), {
-        errorHandler: false,
+        errorHandler: environmentConfig.environment !== 'development',
     });
 };
 

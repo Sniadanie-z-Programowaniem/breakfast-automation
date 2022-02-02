@@ -1,4 +1,5 @@
-import { environmentConfig, logger } from '../common';
+import { environmentConfig, logger } from '../../common';
+import { getEmojiIndicator, getSmallTalkPrompt } from './prompts';
 
 import axios from 'axios';
 
@@ -7,15 +8,6 @@ interface DiscordWebhookPayload {
     readonly content: string;
 }
 
-const SmallTalkPrompts: ReadonlyArray<string> = [
-    'Właśnie rozmawiamy o',
-    'Na talerz wiechało',
-    'Jak ciastko do kawy',
-    'A teraz coś z innej filiżanki',
-    'Kolejny news',
-    'Rzućmy okiem na',
-];
-
 const prepareMessage = ({
     title,
     links,
@@ -23,10 +15,17 @@ const prepareMessage = ({
     readonly title: string;
     readonly links: readonly string[];
 }) => {
-    const prompt = SmallTalkPrompts[(SmallTalkPrompts.length * Math.random()) | 0];
-    const displayLinks = links.length ? '\nLinki:' + links.map((link) => `\n* ${link}`) : '';
+    const prompt = getSmallTalkPrompt();
+    const emoji = getEmojiIndicator();
 
-    return `${prompt}\n**${title}${displayLinks}`;
+    const displayLinks = links.length ? '\n' + links.map((link) => `\n* ${link}`) : '';
+
+    // yeah, it is cheesy that server handles that not client :badpockerface:
+    const now = new Intl.DateTimeFormat('pl-PL', { dateStyle: 'full', timeStyle: 'short' }).format(
+        new Date(),
+    );
+
+    return `${emoji} ${now} | ${prompt} **${title}**${displayLinks}`;
 };
 
 const publishNews = async ({
@@ -46,8 +45,10 @@ const publishNews = async ({
     logger.info('URL:', newsPublishBotUrl);
 
     try {
-        await axios.post(newsPublishBotUrl, {
-            body: JSON.stringify(payload),
+        await axios.post<DiscordWebhookPayload>(newsPublishBotUrl, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
     } catch (error) {
         logger.error(error);
