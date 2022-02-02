@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "author": "",
     "description": "Śniadanie z Programowaniem automation",
-    "type": "module",
     "main": "index.js",
     "scripts": {
         "build": "(cd webhook && npm run build)",

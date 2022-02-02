@@ -4,12 +4,12 @@ import { trello } from '../services/trello';
 
 const SUPPORTED_ACTION_TYPES: readonly TrelloWebhookResponse['action']['type'][] = [
     'createCard',
-    'updateBoard',
+    'updateCard',
 ];
 
 export const handle = async (trelloResponse: TrelloWebhookResponse) => {
     if (!SUPPORTED_ACTION_TYPES.includes(trelloResponse.action.type)) {
-        throw new Error(`Not supported Trello action type: ${trelloResponse.action.type}`);
+        throw new Error(`Not supported Trello action type:"${trelloResponse.action.type}"`);
     }
 
     const {
@@ -18,5 +18,5 @@ export const handle = async (trelloResponse: TrelloWebhookResponse) => {
 
     const attachments = await trello.getAttachmentsFor({ cardId });
 
-    discord.publishNews({ title: name, links: attachments?.map((item) => item.url) || [] });
+    await discord.publishNews({ title: name, links: attachments?.map((item) => item.url) || [] });
 };

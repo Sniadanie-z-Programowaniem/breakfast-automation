@@ -1,5 +1,6 @@
-import { environmentConfig } from '../common';
-import got from 'got';
+import { environmentConfig, logger } from '../common';
+
+import axios from 'axios';
 
 interface DiscordWebhookPayload {
     readonly username: string;
@@ -28,7 +29,7 @@ const prepareMessage = ({
     return `${prompt}\n**${title}${displayLinks}`;
 };
 
-const publishNews = ({
+const publishNews = async ({
     title,
     links,
 }: {
@@ -42,9 +43,15 @@ const publishNews = ({
         username: botUserName,
     };
 
-    got.post(newsPublishBotUrl, {
-        body: JSON.stringify(payload),
-    });
+    logger.info('URL:', newsPublishBotUrl);
+
+    try {
+        await axios.post(newsPublishBotUrl, {
+            body: JSON.stringify(payload),
+        });
+    } catch (error) {
+        logger.error(error);
+    }
 };
 
 export const discord = {
