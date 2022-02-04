@@ -20,7 +20,8 @@
         ],
         "functional/prefer-readonly-type": "error",
         "functional/no-this-expression": "error",
-        "functional/no-loop-statement": "error"
+        "functional/no-loop-statement": "error",
+        "@typescript-eslint/no-explicit-any": "error"
     },
     "env": {
         "node": true

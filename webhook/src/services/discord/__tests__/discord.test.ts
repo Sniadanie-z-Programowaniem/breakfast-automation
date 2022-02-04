@@ -34,7 +34,7 @@ describe('discord', () => {
             };
 
             const actualHttpCall = nock('https://example.com/discord-webhook')
-                .post('', expectedPayload as any as DataMatcherMap)
+                .post('', expectedPayload as unknown as DataMatcherMap)
                 .reply(200);
 
             await expect(
