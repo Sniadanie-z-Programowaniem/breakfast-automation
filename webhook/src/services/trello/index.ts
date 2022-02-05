@@ -24,6 +24,7 @@ const getAttachmentsFor = async ({
 
         return data;
     } catch (error) {
+        // todo this sucks - create abstraction which will take error or any payload as second arg
         logger.error(`Cannot fetch trello attachment for cardId=${cardId}. Error:${error}`);
         return [];
     }

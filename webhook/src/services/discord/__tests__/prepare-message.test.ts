@@ -25,7 +25,7 @@ describe('prepare-message', () => {
             });
 
             expect(actual).toBe(
-                `👋 wtorek, 1 lutego 2022 10:00 | And another news **News title**\n\n* https://babeljs.io/blog/2022/02/02/7.17.0`,
+                `👋 wtorek, 1 lutego 2022 10:00 | And another news **News title**\n\n- https://babeljs.io/blog/2022/02/02/7.17.0`,
             );
         });
 
@@ -42,9 +42,9 @@ describe('prepare-message', () => {
             expect(actual).toBe(
                 `\
 👋 wtorek, 1 lutego 2022 10:00 | And another news **News title**\
-\n\n* https://babeljs.io/blog/2022/02/02/7.17.0,\
-\n* https://github.com/tc39/proposal-decorators/,\
-\n* https://frontlive.pl/blog/remix-konkurencja-dla-next-czy-bezuzyteczny-framework`,
+\n\n- https://babeljs.io/blog/2022/02/02/7.17.0,\
+\n- https://github.com/tc39/proposal-decorators/,\
+\n- https://frontlive.pl/blog/remix-konkurencja-dla-next-czy-bezuzyteczny-framework`,
             );
         });
     });

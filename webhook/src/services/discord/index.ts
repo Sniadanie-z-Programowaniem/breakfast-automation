@@ -29,7 +29,7 @@ const publishNews = async ({
             },
         });
     } catch (error) {
-        logger.error(error);
+        logger.error(`Cannot post message on discors. Error:${error}`);
     }
 };
 

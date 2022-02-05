@@ -10,7 +10,7 @@ export const prepareMessage = ({
     const prompt = getSmallTalkPrompt();
     const emoji = getEmojiIndicator();
 
-    const displayLinks = links.length ? '\n' + links.map((link) => `\n* ${link}`) : '';
+    const displayLinks = links.length ? '\n' + links.map((link) => `\n- ${link}`) : '';
 
     // yeah, it is cheesy that server handles that not client :badpockerface:
     const now = new Intl.DateTimeFormat('pl-PL', { dateStyle: 'full', timeStyle: 'short' }).format(
