@@ -623,7 +623,12 @@ export namespace Trello {
             request(command: string, options: any): PromiseLike<any>;
             render(fxRender: () => void): any;
             initApi(): void;
-            getRestApi(): unknown;
+            readonly getRestApi: () => {
+                readonly getToken: () => Promise<string>;
+                readonly apiOrigin: string;
+                readonly authorize: (params: { readonly scope: 'read' | 'write' }) => Promise<void>;
+                readonly isAuthorized: () => Promise<boolean>;
+            };
             initSentry(): void;
         }
 

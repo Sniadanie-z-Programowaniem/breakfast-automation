@@ -1,52 +1,66 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive, onMounted } from 'vue';
+import { Trello } from '../../typings/trello';
+import { environmentConfig } from '../configuration';
+import { getTrelloApiService } from '../services/trello';
 
-defineProps<{ msg: string }>()
+type ListParams = {
+    id: string;
+    name: string;
+};
 
-const count = ref(0)
+defineProps<{ msg: string }>();
+
+const trello = ref<Trello.PowerUp.IFrame | null>(null);
+const state = reactive<{ list: ListParams | null }>({
+    list: null,
+});
+
+onMounted(async () => {
+    const { appKey, appName } = environmentConfig.trello;
+
+    const newTrelloRef = window.TrelloPowerUp.iframe({
+        appKey,
+        appName,
+    });
+
+    trello.value = newTrelloRef;
+
+    state.list = await newTrelloRef.list('id', 'name');
+});
+
+const startBroadcasting = () => {
+    state.list?.id &&
+        trello.value &&
+        getTrelloApiService(trello.value).lists.update(state.list.id, {
+            name: `[Rec:🔴]${state.list.name}`,
+        });
+};
 </script>
 
 <template>
-  <h1>{{ msg || 'Stub!' }}</h1>
+    <h1>{{ msg || 'Stub!' }}</h1>
+    <h2>
+        Data: <code>{{ JSON.stringify(state, null, 2) }}</code>
+    </h2>
 
-  <p>
-    Recommended IDE setup:
-    <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>
-    +
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-  </p>
-
-  <p>See <code>README.md</code> for more information.</p>
-
-  <p>
-    <a href="https://vitejs.dev/guide/features.html" target="_blank">
-      Vite Docs
-    </a>
-    |
-    <a href="https://v3.vuejs.org/" target="_blank">Vue 3 Docs</a>
-  </p>
-
-  <button type="button" @click="count++">count is: {{ count }}</button>
-  <p>
-    Edit
-    <code>components/HelloWorld.vue</code> to test hot module replacement.
-  </p>
+    <button @click="startBroadcasting()">🔴 Start broadcasting</button>
 </template>
 
 <style scoped>
 a {
-  color: #42b983;
+    color: #42b983;
 }
 
 label {
-  margin: 0 0.5em;
-  font-weight: bold;
+    margin: 0 0.5em;
+    font-weight: bold;
 }
 
 code {
-  background-color: #eee;
-  padding: 2px 4px;
-  border-radius: 4px;
-  color: #304455;
+    background-color: #eee;
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: #304455;
 }
 </style>
