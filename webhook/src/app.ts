@@ -15,7 +15,10 @@ const routes: FastifyPluginAsync = async (fastify) => {
         status: 'ok',
     }));
 
-    fastify.get('/config', async () => environmentConfig);
+    fastify.head('/trello-webhook-handler', async () => ({
+        status: 'ok',
+    }));
+
     fastify.post<{ readonly Body: TrelloWebhookResponse }>(
         '/trello-webhook-handler',
         async (request, reply) => {
@@ -28,7 +31,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
 
 export const app: FastifyPluginAsync = async (fastify) => {
     fastify.register(libs);
-    fastify.register(routes);
+    fastify.register(routes, { prefix: 'api' });
 };
 
 export default app;

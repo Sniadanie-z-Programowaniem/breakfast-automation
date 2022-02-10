@@ -9,12 +9,5 @@
 
     <body>
         <h1>@breakfast/automation</h1>
-        <pre><code id="config"></code></pre>
-        <script>
-            const configElement = document.querySelector('#config');
-            fetch('/config')
-                .then((r) => r.json())
-                .then((config) => (configElement.innerHTML = JSON.stringify(config)));
-        </script>
     </body>
 </html>
