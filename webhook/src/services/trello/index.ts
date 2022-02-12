@@ -4,13 +4,11 @@ import { TrelloAttachment } from '../../model';
 import axios from 'axios';
 
 const TRELLO_API_BASE_URL = 'https://api.trello.com/1';
-const trelloApiUrlFor = (path: string) => {
-    const url = new URL(TRELLO_API_BASE_URL + path);
-    url.searchParams.set('key', environmentConfig.trello.apiKey);
-    url.searchParams.set('token', environmentConfig.trello.apiToken);
+const trelloApiUrlFor = (path: string) => new URL(TRELLO_API_BASE_URL + path);
 
-    return url;
-};
+const authHeader = Object.freeze({
+    Authorize: `OAuth oauth_consumer_key="${environmentConfig.trello.apiKey}", oauth_token="${environmentConfig.trello.apiToken}"`,
+});
 
 const getAttachmentsFor = async ({
     cardId,
@@ -20,6 +18,11 @@ const getAttachmentsFor = async ({
     try {
         const { data } = await axios.get<readonly TrelloAttachment[]>(
             trelloApiUrlFor(`/cards/${cardId}/attachments`).toString(),
+            {
+                headers: {
+                    ...authHeader,
+                },
+            },
         );
 
         return data;

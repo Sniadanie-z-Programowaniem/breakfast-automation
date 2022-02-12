@@ -12,8 +12,14 @@ jest.mock('../../../common', () => ({
     },
 }));
 
+// const authHeaderForTrelloRequests = Object.freeze({
+//     Authorize:
+//         'OAuth oauth_consumer_key="my-secret-trello-api-key-123", oauth_token="my-secret-trello-api-token-456"',
+// });
+
 describe('trello', () => {
     beforeEach(() => {
+        nock.disableNetConnect();
         if (!nock.isActive()) {
             nock.activate();
         }
@@ -44,10 +50,13 @@ describe('trello', () => {
 
             const cardId = 'bdccfcf4-b357-472d-9997-ca33a44191f7';
 
-            const actualHttpCall = nock(`https://api.trello.com/1`)
-                .get(
-                    '/cards/bdccfcf4-b357-472d-9997-ca33a44191f7/attachments?key=my-secret-trello-api-key-123&token=my-secret-trello-api-token-456',
-                )
+            const actualHttpCall = nock(`https://api.trello.com/1`, {
+                reqheaders: {
+                    Authorize:
+                        'OAuth oauth_consumer_key="my-secret-trello-api-key-123", oauth_token="my-secret-trello-api-token-456"',
+                },
+            })
+                .get('/cards/bdccfcf4-b357-472d-9997-ca33a44191f7/attachments')
                 .reply(200, trelloResponse);
 
             await expect(trello.getAttachmentsFor({ cardId })).resolves.not.toThrowError();
@@ -61,10 +70,13 @@ describe('trello', () => {
         async (returnedStatus: number) => {
             const cardId = 'bdccfcf4-b357-472d-9997-ca33a44191f7';
 
-            const actualHttpCall = nock(`https://api.trello.com/1`)
-                .get(
-                    '/cards/bdccfcf4-b357-472d-9997-ca33a44191f7/attachments?key=my-secret-trello-api-key-123&token=my-secret-trello-api-token-456',
-                )
+            const actualHttpCall = nock(`https://api.trello.com/1`, {
+                reqheaders: {
+                    Authorize:
+                        'OAuth oauth_consumer_key="my-secret-trello-api-key-123", oauth_token="my-secret-trello-api-token-456"',
+                },
+            })
+                .get('/cards/bdccfcf4-b357-472d-9997-ca33a44191f7/attachments')
                 .reply(returnedStatus);
 
             const actual = await trello.getAttachmentsFor({ cardId });
