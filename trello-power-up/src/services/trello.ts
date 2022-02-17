@@ -1,9 +1,6 @@
 import type { ApiResponse, ApiResponseError } from './types';
 
-import { Trello } from '../../typings/trello';
 import { environmentConfig } from '../configuration';
-
-const BASE_API = 'https://api.trello.com/1';
 
 type TrelloListUpdatePatchData = {
     readonly name?: string;
@@ -13,63 +10,71 @@ type TrelloListUpdatePatchData = {
     readonly subscribed?: boolean;
 };
 
-const errorResponse = (message: string, error: Error): ApiResponseError => {
-    console.error(message, error.message);
+const errorResponse = (message: string, error?: Error): ApiResponseError => {
+    console.error(message, error?.message);
     return {
         error: message,
         state: 'error',
     };
 };
 
-export const getTrelloApiService = (trello: Trello.PowerUp.IFrame) => {
-    const { appKey } = environmentConfig.trello;
+/**
+ * ref: https://trello.com/1/client.js
+ * ref: https://developer.atlassian.com/cloud/trello/guides/client-js/client-js-reference/
+ */
+const TrelloClientJs = window.Trello;
 
-    const getTokenPromise = () =>
-        trello
-            .getRestApi()
-            .isAuthorized()
-            .then((isAuthorized) =>
-                isAuthorized ? Promise.resolve() : trello.getRestApi().authorize({ scope: 'read' }),
-            )
-            .then(() => trello.getRestApi().getToken())
-            .then((token) => ({
-                token,
-                apiOrigin: trello.getRestApi().apiOrigin,
-            }));
+export const getTrelloApiService = () => {
+    const authorize = (): Promise<void> =>
+        new Promise<void>((resolve, reject) => {
+            TrelloClientJs.authorize({
+                type: 'popup',
+                name: environmentConfig.trello.appName,
+                scope: {
+                    read: true,
+                    write: true,
+                },
+                permanent: true,
+                expiration: 'never',
+                success: () => resolve(),
+                error: (error?: Error) => reject(error),
+            });
+        });
 
-    const fetchData = async <TData = unknown>({
-        path,
-        queryParams = {},
-    }: {
-        readonly path: string;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        readonly queryParams: Record<string, any> | URLSearchParams;
-    }): Promise<ApiResponse<TData>> => {
-        let token;
+    const makeCall = async <T>(
+        trelloClientCall: (resolve: (data: T) => void, reject: (error: Error) => void) => void,
+    ): Promise<ApiResponse<T>> => {
         try {
-            token = (await getTokenPromise()).token;
-            console.log('token:', token)
-            debugger;
+            await authorize();
+            console.log('Successfully authorized to Trello');
         } catch (error) {
-            return Promise.resolve(errorResponse(`Cannot retrieve API token`, error));
+            return Promise.resolve(errorResponse(`Cannot authorize to Trello`, error as Error));
         }
 
-        const data: TData = await fetch(
-            `${BASE_API}/${path}?key=${appKey}&token=${token}&${new URLSearchParams(queryParams)}`,
-        ).then((response) => response.json());
+        try {
+            const result = await new Promise<T>((resolve, reject) =>
+                trelloClientCall(resolve, reject),
+            );
 
-        return {
-            state: 'success',
-            data,
-        };
+            return {
+                state: 'success',
+                data: result,
+            };
+        } catch (error) {
+            return Promise.resolve(errorResponse(`Failed at calling Trello API`, error as Error));
+        }
     };
 
     const lists = {
         update: (listId: string, patchData: TrelloListUpdatePatchData): Promise<ApiResponse> =>
-            fetchData({
-                path: `lists/${listId}`,
-                queryParams: patchData,
-            }),
+            makeCall((resolve, reject) =>
+                TrelloClientJs.put<ApiResponse, TrelloListUpdatePatchData>(
+                    `lists/${listId}`,
+                    patchData,
+                    resolve,
+                    reject,
+                ),
+            ),
     };
 
     return {

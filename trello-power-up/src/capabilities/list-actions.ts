@@ -1,7 +1,7 @@
 import { Trello } from '../../typings/trello';
 
-const listActions = (mainContext: Trello.PowerUp.IFrame): readonly Trello.PowerUp.ListAction[] => {
-    mainContext.get;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const listActions = (_: Trello.PowerUp.IFrame): readonly Trello.PowerUp.ListAction[] => {
     return [
         {
             text: 'hello!',
@@ -19,8 +19,13 @@ const listActions = (mainContext: Trello.PowerUp.IFrame): readonly Trello.PowerU
                 trello.popup({
                     title: 'Start broadcasting',
                     url: '/broadcast-popup',
+                    height: 250,
                 });
             },
         },
     ];
+};
+
+export const listActionCapabilities = {
+    'list-actions': (trello: Trello.PowerUp.IFrame) => listActions(trello),
 };

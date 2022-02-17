@@ -586,7 +586,7 @@ export namespace Trello {
             attach(data: { readonly name: string; readonly url: string }): PromiseLike<void>;
             requestToken(options: unknown): PromiseLike<string>;
             authorize(
-                authUrl: string,
+                authUrl?: string,
                 options?: {
                     readonly height?: number;
                     readonly width?: number;
@@ -626,7 +626,9 @@ export namespace Trello {
             readonly getRestApi: () => {
                 readonly getToken: () => Promise<string>;
                 readonly apiOrigin: string;
-                readonly authorize: (params: { readonly scope: 'read' | 'write' }) => Promise<void>;
+                readonly authorize: (params?: {
+                    readonly scope?: 'read' | 'write';
+                }) => Promise<void>;
                 readonly isAuthorized: () => Promise<boolean>;
             };
             initSentry(): void;
@@ -659,11 +661,36 @@ export namespace Trello {
             NotHandled(): any; // return PostMessageIO.NotHandled, whatever that is
         }
     }
+
+    interface ClientJs {
+        authorize(params: {
+            readonly type: 'redirect' | 'popup';
+            readonly name: string;
+            readonly scope?: {
+                readonly read?: boolean;
+                readonly write?: boolean;
+                readonly account?: boolean;
+            };
+            readonly permanent?: boolean;
+            readonly interactive?: boolean;
+            readonly expiration?: '1hour' | '1day' | '30days' | 'never';
+            readonly success?: () => void;
+            readonly error?: (error?: Error) => void;
+        }): void;
+
+        put<TResult, TParams>(
+            path: string,
+            params: TParams,
+            success: (data: TResult) => void,
+            error: (error: Error) => void,
+        ): void;
+    }
 }
 
 declare global {
     interface Window {
         readonly TrelloPowerUp: Trello.PowerUp;
         readonly locale: string;
+        readonly Trello: Trello.ClientJs;
     }
 }

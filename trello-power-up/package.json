@@ -1,19 +1,22 @@
 {
-  "name": "trello-power-up",
-  "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "vue": "^3.2.25",
-    "vue-router": "^4.0.12"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^2.0.0",
-    "typescript": "^4.4.4",
-    "vite": "^2.7.2",
-    "vue-tsc": "^0.29.8"
-  }
+    "name": "trello-power-up",
+    "version": "0.0.0",
+    "scripts": {
+        "dev": "vite --port 3000",
+        "build": "vue-tsc --noEmit && vite build",
+        "preview": "vite preview",
+        "ngrok": "ngrok http 3000 --host-header=rewrite"
+    },
+    "dependencies": {
+        "jquery": "^3.6.0",
+        "vue": "^3.2.25",
+        "vue-router": "^4.0.12"
+    },
+    "devDependencies": {
+        "@types/jquery": "^3.5.13",
+        "@vitejs/plugin-vue": "^2.0.0",
+        "typescript": "^4.4.4",
+        "vite": "^2.7.2",
+        "vue-tsc": "^0.29.8"
+    }
 }
