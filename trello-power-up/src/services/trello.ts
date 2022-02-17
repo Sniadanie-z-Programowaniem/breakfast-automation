@@ -19,8 +19,7 @@ const errorResponse = (message: string, error?: Error): ApiResponseError => {
 };
 
 /**
- * ref: https://trello.com/1/client.js
- * ref: https://developer.atlassian.com/cloud/trello/guides/client-js/client-js-reference/
+ * Minified vendor library, @link {src/vendor/trello-client.js}
  */
 const TrelloClientJs = window.Trello;
 
