@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import App from './App.vue';
-import BroadcastPopup from './components/BroadcastPopup.vue';
+import BroadcastPopup from './components/broadcastPopup';
 import InitializePowerUp from './components/InitializePowerUp.vue';
 import { createApp } from 'vue';
 
