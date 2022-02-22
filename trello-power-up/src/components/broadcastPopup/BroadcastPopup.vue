@@ -21,9 +21,9 @@ type Operation = 'start' | 'stop';
 
 const LIST_PREFIX = '[ Rec:🔴 ] ';
 
-const state = reactive<{ list: ListParams | null }>({
+const state = reactive<{ list: ListParams | null; loading: boolean }>({
     list: null,
-    // episode: null,
+    loading: true,
 });
 
 const { episode, set: setEpisode } = useStoredEpisode();
@@ -57,6 +57,7 @@ onMounted(async () => {
     });
 
     state.list = await newTrelloRef.list('id', 'name');
+    state.loading = false;
 });
 
 const updateListName = async (operation: Operation, name: string) =>
@@ -69,25 +70,25 @@ const updateListName = async (operation: Operation, name: string) =>
     );
 
 const startBroadcasting = async (episode: EpisodeBroadcast) => {
-    // state.episode = episode;
-    setEpisode(episode);
-    state.list && (await updateListName('start', `${LIST_PREFIX}${state.list.name}`));
+    state.loading = true;
+    await Promise.all([
+        setEpisode(episode),
+        state.list && updateListName('start', `${LIST_PREFIX}${state.list.name}`),
+    ]);
     iframeInstance().closePopup();
 };
 
 const stopBroadcasting = async () => {
-    // state.episode = null;
-    setEpisode(null);
-    state.list && (await updateListName('stop', state.list.name.replaceAll(LIST_PREFIX, '')));
+    state.loading = true;
+    await Promise.all([
+        setEpisode(null),
+        state.list && updateListName('stop', state.list.name.replaceAll(LIST_PREFIX, '')),
+    ]);
     iframeInstance().closePopup();
 };
 </script>
 
 <template>
-    <p>
-        Data: <code>{{ JSON.stringify(state, null, 2) }}</code>
-    </p>
-
     <BroadcastingInProgress v-if="episode" :episode="episode" @stop="stopBroadcasting" />
     <StartBroadcasting v-else @started="startBroadcasting" />
 </template>

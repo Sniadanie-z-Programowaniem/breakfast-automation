@@ -1,25 +1,22 @@
 import { Trello } from '../../typings/trello';
+import { episodeStorage } from '../trello-storage';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const listActions = (_: Trello.PowerUp.IFrame): readonly Trello.PowerUp.ListAction[] => {
+const listActions = async (
+    trello: Trello.PowerUp.IFrame,
+): Promise<readonly Trello.PowerUp.ListAction[]> => {
+    const episode = await episodeStorage(trello).get();
+
+    const text = episode ? `❌ Stop broadcasting` : '🔴 Start broadcasting';
+
     return [
         {
-            text: 'hello!',
-            callback: async (trello) => {
-                trello.alert({
-                    display: 'success',
-                    duration: 3,
-                    message: 'It works!',
-                });
-            },
-        },
-        {
-            text: 'show me popup',
+            text,
             callback: async (trello) => {
                 trello.popup({
-                    title: 'Start broadcasting',
+                    title: 'Episode broadcasting',
                     url: '/broadcast-popup',
-                    height: 250,
+                    height: 320,
                 });
             },
         },

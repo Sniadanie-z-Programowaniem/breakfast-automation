@@ -18,26 +18,43 @@ const submitForm = () => {
 <template>
     <h3>Start broadcasting</h3>
     <form @submit.prevent="submitForm">
-        <input
-            type="radio"
-            id="frontend"
-            name="type"
-            value="frontend"
-            v-model="form.type"
-            required
-        />
-        <label for="frontend">💅 Frontend</label>
+        <div class="container">
+            <div>
+                <input
+                    type="radio"
+                    id="frontend"
+                    name="type"
+                    value="frontend"
+                    v-model="form.type"
+                    required
+                />
+                <label for="frontend">💅 Frontend</label>
+            </div>
 
-        <br />
+            <div>
+                <input
+                    type="radio"
+                    id="backend"
+                    name="type"
+                    value="backend"
+                    v-model="form.type"
+                    required
+                />
+                <label for="backend">🪲 Backend</label>
+            </div>
 
-        <input type="radio" id="backend" name="type" value="backend" v-model="form.type" required />
-        <label for="backend">🪲 Backend</label>
+            <div class="container">
+                <label for="number">📝 Episode number</label>
+                <input type="number" id="number" v-model="form.number" required />
+            </div>
 
-        <br />
+            <div class="container">
+                <label for="streamUrl">🤳 Stream URL</label>
+                <input type="url" id="streamUrl" v-model="form.streamUrl" required />
+            </div>
 
-        <label for="number">📝 Episode number</label>
-        <input type="number" id="number" v-model="form.number" required />
-        <button type="submit">Go!</button>
+            <button type="submit">Go!</button>
+        </div>
     </form>
 </template>
 
