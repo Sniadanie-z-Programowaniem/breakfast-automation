@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { reactive, onMounted } from 'vue';
 import { Trello } from '../../../typings/trello';
 import { environmentConfig } from '../../configuration';
 import { getTrelloApiService } from '../../services/trello';
@@ -7,6 +7,8 @@ import { ApiResponse } from '../../services/types';
 import { EpisodeBroadcast } from './types';
 import StartBroadcasting from './StartBroadcasting.vue';
 import BroadcastingInProgress from './BroadcastingInProgress.vue';
+import { iframeInstance } from '../../power-up';
+import useStoredEpisode from '../../trello-storage';
 
 defineProps<{ msg: string }>();
 
@@ -19,23 +21,12 @@ type Operation = 'start' | 'stop';
 
 const LIST_PREFIX = '[ Rec:🔴 ] ';
 
-const state = reactive<{ list: ListParams | null; episode: EpisodeBroadcast | null }>({
+const state = reactive<{ list: ListParams | null }>({
     list: null,
-    episode: null,
+    // episode: null,
 });
 
-/**
- * When called as Web API callback, we have to instantiate new iFrame helper object
- * from trello. If not - we're getting CORS error.
- */
-const iframeInstance = (): Trello.PowerUp.IFrame => {
-    const { appKey, appName } = environmentConfig.trello;
-
-    return window.TrelloPowerUp.iframe({
-        appKey,
-        appName,
-    });
-};
+const { episode, set: setEpisode } = useStoredEpisode();
 
 const notifyUser = (
     operation: Operation,
@@ -78,13 +69,17 @@ const updateListName = async (operation: Operation, name: string) =>
     );
 
 const startBroadcasting = async (episode: EpisodeBroadcast) => {
-    state.episode = episode;
+    // state.episode = episode;
+    setEpisode(episode);
     state.list && (await updateListName('start', `${LIST_PREFIX}${state.list.name}`));
+    iframeInstance().closePopup();
 };
 
 const stopBroadcasting = async () => {
-    state.episode = null;
+    // state.episode = null;
+    setEpisode(null);
     state.list && (await updateListName('stop', state.list.name.replaceAll(LIST_PREFIX, '')));
+    iframeInstance().closePopup();
 };
 </script>
 
@@ -93,11 +88,7 @@ const stopBroadcasting = async () => {
         Data: <code>{{ JSON.stringify(state, null, 2) }}</code>
     </p>
 
-    <BroadcastingInProgress
-        v-if="state.episode"
-        :episode="state.episode"
-        @stop="stopBroadcasting"
-    />
+    <BroadcastingInProgress v-if="episode" :episode="episode" @stop="stopBroadcasting" />
     <StartBroadcasting v-else @started="startBroadcasting" />
 </template>
 
