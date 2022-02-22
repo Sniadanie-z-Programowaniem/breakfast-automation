@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { reactive, onMounted } from 'vue';
 import { Trello } from '../../../typings/trello';
-import { environmentConfig } from '../../configuration';
 import { getTrelloApiService } from '../../services/trello';
 import { ApiResponse } from '../../services/types';
 import { EpisodeBroadcast } from './types';
@@ -49,14 +48,7 @@ const notifyUser = (
 };
 
 onMounted(async () => {
-    const { appKey, appName } = environmentConfig.trello;
-
-    const newTrelloRef = window.TrelloPowerUp.iframe({
-        appKey,
-        appName,
-    });
-
-    state.list = await newTrelloRef.list('id', 'name');
+    state.list = await iframeInstance().list('id', 'name');
     state.loading = false;
 });
 
