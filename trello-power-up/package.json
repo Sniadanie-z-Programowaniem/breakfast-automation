@@ -5,7 +5,8 @@
         "dev": "vite --port 3000",
         "build": "vue-tsc --noEmit && vite build",
         "preview": "vite preview",
-        "ngrok": "ngrok http 3000 --host-header=rewrite"
+        "ngrok": "ngrok http 3000 --host-header=rewrite",
+        "serve-dist": "npx http-server --port 3000 -P \"http://localhost:3000?\" ./dist"
     },
     "dependencies": {
         "jquery": "^3.6.0",

@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { reactive, onMounted } from 'vue';
 import { Trello } from '../../../typings/trello';
-import { getTrelloApiService } from '../../services/trello';
+import { trelloApiService } from '../../services/trello';
 import { ApiResponse } from '../../services/types';
 import { EpisodeBroadcast } from './types';
 import StartBroadcasting from './StartBroadcasting.vue';
 import BroadcastingInProgress from './BroadcastingInProgress.vue';
 import { iframeInstance } from '../../power-up';
 import useStoredEpisode from '../../trello-storage';
-
-defineProps<{ msg: string }>();
 
 type ListParams = {
     id: string;
@@ -56,33 +54,42 @@ const updateListName = async (operation: Operation, name: string) =>
     state.list &&
     notifyUser(
         operation,
-        await getTrelloApiService().lists.update(state.list.id, {
+        await trelloApiService.lists.update(state.list.id, {
             name,
         }),
     );
 
-const startBroadcasting = async (episode: EpisodeBroadcast) => {
+const runBroadcastingOperation = async (operation: () => Promise<unknown[]>) => {
     state.loading = true;
-    await Promise.all([
-        setEpisode(episode),
-        state.list && updateListName('start', `${LIST_PREFIX}${state.list.name}`),
-    ]);
+    await operation();
     iframeInstance().closePopup();
 };
 
-const stopBroadcasting = async () => {
-    state.loading = true;
-    await Promise.all([
-        setEpisode(null),
-        state.list && updateListName('stop', state.list.name.replaceAll(LIST_PREFIX, '')),
-    ]);
-    iframeInstance().closePopup();
-};
+const startBroadcasting = async (episode: EpisodeBroadcast) =>
+    runBroadcastingOperation(() =>
+        Promise.all([
+            setEpisode(episode),
+            state.list && updateListName('start', `${LIST_PREFIX}${state.list.name}`),
+        ]),
+    );
+
+const stopBroadcasting = async () =>
+    runBroadcastingOperation(() =>
+        Promise.all([
+            setEpisode(null),
+            state.list && updateListName('stop', state.list.name.replaceAll(LIST_PREFIX, '')),
+        ]),
+    );
 </script>
 
 <template>
-    <BroadcastingInProgress v-if="episode" :episode="episode" @stop="stopBroadcasting" />
-    <StartBroadcasting v-else @started="startBroadcasting" />
+    <template v-if="state.loading">
+        <p>Loading...</p>
+    </template>
+    <template v-else>
+        <BroadcastingInProgress v-if="episode" :episode="episode" @stop="stopBroadcasting" />
+        <StartBroadcasting v-else @started="startBroadcasting" />
+    </template>
 </template>
 
 <style scoped>

@@ -7,3 +7,5 @@ onMounted(() => {
     initializePowerUpWithCapabilities();
 });
 </script>
+
+<template></template>

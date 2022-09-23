@@ -684,6 +684,9 @@ export namespace Trello {
             success: (data: TResult) => void,
             error: (error: Error) => void,
         ): void;
+
+        token(): string | null;
+        setToken(token: string): void;
     }
 }
 
